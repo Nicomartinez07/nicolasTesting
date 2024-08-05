@@ -15,7 +15,7 @@ def test_register(client, app):
     assert response.headers["Location"] == "/auth/login"
 
     #primera falla
-    #segundo no falla  
+    #segundo falla 
     #tercero fallaron todos
     #cuarto falla
 
