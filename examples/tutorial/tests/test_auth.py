@@ -4,6 +4,7 @@ from flask import session
 
 from flaskr.db import get_db
 from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash
 
 
 def test_register(client, app):
@@ -24,7 +25,7 @@ def test_register(client, app):
         
         usuario = get_db().execute("SELECT * FROM user WHERE username = 'a'").fetchone()     
         assert(usuario is not None)
-        assert(usuario["password"] == generate_password_hash("b")) 
+        assert(check_password_hash(usuario["password"], "b")) 
        
 
 
