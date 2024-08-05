@@ -3,6 +3,7 @@ from flask import g
 from flask import session
 
 from flaskr.db import get_db
+from werkzeug.security import generate_password_hash
 
 
 def test_register(client, app):
@@ -10,30 +11,36 @@ def test_register(client, app):
     assert client.get("/auth/register").status_code == 200
 
     # test that successful registration redirects to the login page
-    response = client.post("/auth/register", data={"username": "a", "password": "a"})
+    response = client.post("/auth/register", data={"username": "a", "password": "b"})
     assert response.headers["Location"] == "/auth/login"
+
+    #primera falla
+    #segundo no falla  
+    #tercero fallaron todos
+    #cuarto falla
 
     # test that the user was inserted into the database
     with app.app_context():
-        assert (
-            get_db().execute("SELECT * FROM user WHERE username = 'a'").fetchone()
-            is not None
-        )
+        
+        usuario = get_db().execute("SELECT * FROM user WHERE username = 'a'").fetchone()     
+        assert(usuario is not None)
+        assert(usuario["password"] == generate_password_hash("b")) 
+       
 
 
 @pytest.mark.parametrize(
     ("username", "password", "message"),
     (
-        ("", "", b"Username is required."),
-        ("a", "", b"Password is required."),
-        ("test", "test", b"already registered"),
+        ("", "", "Username is required."),
+        ("a", "", "Password is required."),
+        ("test", "test", "already registered"),
     ),
 )
 def test_register_validate_input(client, username, password, message):
     response = client.post(
         "/auth/register", data={"username": username, "password": password}
     )
-    assert message in response.data
+    assert message in response.data.decode()
 
 
 def test_login(client, auth):

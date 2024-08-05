@@ -9,4 +9,10 @@ def test_config():
 
 def test_hello(client):
     response = client.get("/hello")
-    assert response.data == b"Hello, World!"
+    #HAY Q HACER DECODE PARA USAR CARACTERES Q NO ESTAN PERMITIDOS
+    
+    #decode() bytes --> string
+    #encode() string --> bytes
+
+    #b'hola mundo' hace que se convierta en bytes aunque se muestre en texto
+    assert response.data.decode() == "¡Hola Mundo!"
